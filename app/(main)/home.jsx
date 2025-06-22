@@ -10,7 +10,7 @@ export default function HomeScreen() {
         updates and features.
       </Text>
       <Text style={tw`text-sm text-gray-500 mt-4`}>
-        Explore the app and enjoy your experience!
+        Explore the app and enjoy your experience!  
       </Text>
     </View>
   );
