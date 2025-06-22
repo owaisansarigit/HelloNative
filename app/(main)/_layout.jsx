@@ -4,6 +4,7 @@ import { Text, useWindowDimensions, View } from 'react-native';
 import { SceneMap, TabView } from 'react-native-tab-view';
 import tw from 'twrnc';
 import About from './about';
+import Contact from './contact';
 import Home from './home';
 import Services from './services';
 
@@ -11,6 +12,7 @@ const renderScene = SceneMap({
   home: Home,
   services: Services,
   about: About,
+  contact: Contact,
 });
 
 export default function App() {
@@ -20,6 +22,7 @@ export default function App() {
     { key: 'home', title: 'Home', icon: 'home-outline' },
     { key: 'services', title: 'Services', icon: 'construct-outline' },
     { key: 'about', title: 'About', icon: 'information-circle-outline' },
+    { key: 'contact', title: 'Contact Us', icon: 'information-circle-outline' },
   ]);
 
   const renderTabBar = () => (
