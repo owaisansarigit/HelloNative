@@ -11,7 +11,7 @@ export default function Home() {
         style={tw`w-full h-48 rounded-xl mb-6`}
         resizeMode="cover"
       />
-      <Text variant="headlineMedium" style={tw`text-[#1e40af] font-semi-bold mb-6`}>
+      <Text variant="headlineMedium" style={tw`text-[#1e40af] font-light mb-6`}>
         Welcome to MyCompany
       </Text>
       <Text style={tw`text-center text-gray-600 mb-6`}>

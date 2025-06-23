@@ -47,7 +47,7 @@ export default function App() {
   }
 
   const renderTabBar = () => (
-    <View style={tw`flex-row justify-around bg-white border-t border-gray-300 py-2 h-16`}>
+    <View style={tw`flex-row justify-around bg-white border-t border-gray-300 py-2 px-3 h-16`}>
       {routes.map((route, i) => {
         const focused = index === i;
         return (
@@ -64,7 +64,7 @@ export default function App() {
             >
               {route.title}
             </Text>
-            {focused && <View style={tw`w-7 h-0.5 bg-[#25D366] rounded-full mt-1`} />}
+            <View style={[tw`w-15 h-0.5 bg-[#25D366] rounded-full mt-1`, { opacity: focused ? 1 : 0 }]} />
           </View>
         );
       })}

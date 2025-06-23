@@ -1,14 +1,26 @@
 import { Link } from 'expo-router';
+import { useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import tw from 'twrnc';
-import { useAuth } from '../utils/authContext'; // Import AuthContext if needed
+import { useAuth } from '../utils/authContext';
+import { useSnackbar } from '../utils/snackbarContext';
+
 
 export default function LoginScreen() {
+  const { showSnackbar } = useSnackbar();
   const { login } = useAuth();
+  const [visible, setVisible] = useState(false);
+
   const handleLogin = () => {
-    login("23232fhf343");
-    alert("Login successful!"); 
-  }
+    const generateRandomString = (length = 5) =>
+      [...Array(length)].map(() => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'[
+        Math.floor(Math.random() * 62)
+      ]).join('');
+    login(generateRandomString(10));
+    setVisible(true);
+    showSnackbar('Login successful!');
+  };
+
   return (
     <View style={tw`flex-1 justify-center px-8 bg-white`}>
       <Text style={tw`text-3xl font-bold text-center mb-6`}>Login</Text>
