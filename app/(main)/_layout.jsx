@@ -10,6 +10,31 @@ import Contact from './contact';
 import Home from './home';
 import Services from './services';
 
+const TabBar = ({ routes, index, setIndex }) => (
+  <View style={tw`flex-row justify-around bg-white border-t border-gray-300 py-2 px-3 h-16`}>
+    {routes.map((route, i) => {
+      const focused = index === i;
+      return (
+        <View key={route.key} style={tw`items-center justify-center`}>
+          <Ionicons
+            name={route.icon}
+            size={24}
+            color={focused ? '#25D366' : '#888'}
+            onPress={() => setIndex(i)}
+          />
+          <Text
+            onPress={() => setIndex(i)}
+            style={tw`${focused ? 'text-[#25D366]' : 'text-gray-500'} text-xs font-semibold mt-1`}
+          >
+            {route.title}
+          </Text>
+          <View style={[tw`w-15 h-0.5 bg-[#25D366] rounded-full mt-1`, { opacity: focused ? 1 : 0 }]} />
+        </View>
+      );
+    })}
+  </View>
+);
+
 const renderScene = SceneMap({
   home: Home,
   services: Services,
@@ -19,6 +44,7 @@ const renderScene = SceneMap({
 
 export default function App() {
   const layout = useWindowDimensions();
+  const { token, logout } = useAuth();
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     { key: 'home', title: 'Home', icon: 'home-outline' },
@@ -27,16 +53,10 @@ export default function App() {
     { key: 'contact', title: 'Contact Us', icon: 'call-outline' },
   ]);
 
-  const { token, logout } = useAuth();
-
-  // Redirect to auth if not logged in
   useEffect(() => {
-    if (token === null) {
-      router.replace('/(auth)/login');
-    }
+    // if (!token) router.replace('/(auth)/login');
   }, [token]);
 
-  // While loading token (undefined)
   if (token === undefined) {
     return (
       <View style={tw`flex-1 justify-center items-center bg-white`}>
@@ -46,54 +66,20 @@ export default function App() {
     );
   }
 
-  const renderTabBar = () => (
-    <View style={tw`flex-row justify-around bg-white border-t border-gray-300 py-2 px-3 h-16`}>
-      {routes.map((route, i) => {
-        const focused = index === i;
-        return (
-          <View key={route.key} style={tw`items-center justify-center`}>
-            <Ionicons
-              name={route.icon}
-              size={24}
-              color={focused ? '#25D366' : '#888'}
-              onPress={() => setIndex(i)}
-            />
-            <Text
-              onPress={() => setIndex(i)}
-              style={tw`${focused ? 'text-[#25D366]' : 'text-gray-500'} text-xs font-semibold mt-1`}
-            >
-              {route.title}
-            </Text>
-            <View style={[tw`w-15 h-0.5 bg-[#25D366] rounded-full mt-1`, { opacity: focused ? 1 : 0 }]} />
-          </View>
-        );
-      })}
-    </View>
-  );
-
   return (
     <View style={tw`flex-1 bg-white pt-15`}>
-      {/* 🔝 Header */}
+      {/* Header */}
       <View style={tw`px-4 py-3 border-b border-gray-200 flex-row justify-between items-center`}>
         <Text style={tw`text-lg font-bold text-[#25D366]`}>MyCompany</Text>
-        {token ? (
-          <Text
-            onPress={logout}
-            style={tw`text-red-500 font-semibold`}
-          >
-            Logout
-          </Text>
-        ) : (
-          <Text
-            onPress={() => router.replace('/(auth)/login')}
-            style={tw`text-blue-500 font-semibold`}
-          >
-            Login
-          </Text>
-        )}
+        <Text
+          onPress={token ? logout : () => router.replace('/(auth)/login')}
+          style={tw`text-${token ? 'red' : 'blue'}-500 font-semibold`}
+        >
+          {token ? 'Logout' : 'Login'}
+        </Text>
       </View>
 
-      {/* 🧭 Tab View */}
+      {/* Tab View */}
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}
@@ -102,8 +88,8 @@ export default function App() {
         renderTabBar={() => null}
       />
 
-      {/* 🔻 Bottom Tab Bar */}
-      {renderTabBar()}
+      {/* Bottom Tab Bar */}
+      <TabBar routes={routes} index={index} setIndex={setIndex} />
     </View>
   );
 }

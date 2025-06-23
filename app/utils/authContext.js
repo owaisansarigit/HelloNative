@@ -5,7 +5,7 @@ import { getToken, removeToken, saveToken } from './authStorage';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(undefined); // undefined = loading
+  const [token, setToken] = useState(undefined);
 
   useEffect(() => {
     (async () => {
@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     await removeToken();
     setToken(null);
-    router.replace('/(auth)/login'); // force navigation reset
+    // router.replace('/(auth)/login'); 
   };
 
   return (

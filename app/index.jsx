@@ -22,7 +22,9 @@ export default function Index() {
 
   return (
     <PaperProvider>
-      {token ? <Redirect href="/(main)/home" /> : <Redirect href="/(auth)/login" />}
+      {/* {token ? <Redirect href="/(main)/home" /> : <Redirect href="/(auth)/login" />} */}
+      <Redirect href="/(main)/home" />
+      <Redirect href="/(auth)/login" />
     </PaperProvider>
   );
 }
