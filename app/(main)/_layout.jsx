@@ -72,7 +72,7 @@ export default function App() {
   );
 
   return (
-    <View style={tw`flex-1 bg-white`}>
+    <View style={tw`flex-1 bg-white pt-15`}>
       {/* 🔝 Header */}
       <View style={tw`px-4 py-3 border-b border-gray-200 flex-row justify-between items-center`}>
         <Text style={tw`text-lg font-bold text-[#25D366]`}>MyCompany</Text>
