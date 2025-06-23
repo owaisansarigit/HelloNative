@@ -7,8 +7,10 @@ import tw from 'twrnc';
 import { useAuth } from '../utils/authContext';
 import About from './about';
 import Contact from './contact';
+import Flight from './flight';
 import Home from './home';
 import Services from './services';
+
 
 const TabBar = ({ routes, index, setIndex }) => (
   <View style={tw`flex-row justify-around bg-white border-t border-gray-300 py-2 px-3 h-16`}>
@@ -40,6 +42,7 @@ const renderScene = SceneMap({
   services: Services,
   about: About,
   contact: Contact,
+  flight: Flight,
 });
 
 export default function App() {
@@ -48,6 +51,7 @@ export default function App() {
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     { key: 'home', title: 'Home', icon: 'home-outline' },
+    { key: 'flight', title: 'Flight', icon: 'airplane-outline' },
     { key: 'services', title: 'Services', icon: 'construct-outline' },
     { key: 'about', title: 'About', icon: 'information-circle-outline' },
     { key: 'contact', title: 'Contact Us', icon: 'call-outline' },
