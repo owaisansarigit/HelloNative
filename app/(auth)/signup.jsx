@@ -5,7 +5,7 @@ import tw from 'twrnc';
 
 export default function SignupScreen() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
-
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
   const handleChange = (key, value) => {
     setForm({ ...form, [key]: value });
   };
@@ -16,7 +16,7 @@ export default function SignupScreen() {
       Alert.alert(title);
     }
   };
-  const handleSignup = () => {
+  const handleSignup = async () => {
     console.log('Form submitted:', form);
     const { name, email, password } = form;
     if (!name.trim()) return showAlert('Please enter your name.');
@@ -24,7 +24,20 @@ export default function SignupScreen() {
       return showAlert('Enter a valid email.');
     if (!password.trim() || password.length < 6)
       return showAlert('Password must be at least 6 characters.');
-    showAlert('Account created successfully!');
+    try {
+      const response = await fetch(`${apiUrl}/userroutes/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+      console.log('Response:', response);
+      // showAlert('Account created successfully!');
+
+    } catch (error) {
+      console.error('Error during signup:', error);
+    }
   };
 
   return (

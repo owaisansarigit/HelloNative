@@ -11,10 +11,10 @@ import {
   Button,
   List,
   Modal,
+  Provider as PaperProvider,
   Portal,
   Text,
   TextInput,
-  Provider as PaperProvider,
 } from "react-native-paper";
 import tw from "twrnc";
 import { airports } from "../utils/airport";
@@ -29,9 +29,7 @@ export default function FlightSearch() {
   const [toSuggestions, setToSuggestions] = useState([]);
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [visible, setVisible] = useState(false);
-
-  const AMADEUS_API_KEY = "8VVGiZIWLCDgG9eXPpfAxGF7kWWDVAvc";
-  const AMADEUS_API_SECRET = "1lVJaRUz2FvAA9t8";
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
   const getLocalSuggestions = (query) => {
     if (query.length < 2) return [];
@@ -41,6 +39,9 @@ export default function FlightSearch() {
         airport.code.toLowerCase().includes(query.toLowerCase())
     );
   };
+  useEffect(() => {
+    console.log(apiUrl);
+  }, [])
 
   const handleFromChange = (text) => {
     setFrom(text);
@@ -52,86 +53,31 @@ export default function FlightSearch() {
     setToSuggestions(getLocalSuggestions(text));
   };
 
-  const getAccessToken = async () => {
-    const res = await fetch(
-      "https://test.api.amadeus.com/v1/security/oauth2/token",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: `grant_type=client_credentials&client_id=${AMADEUS_API_KEY}&client_secret=${AMADEUS_API_SECRET}`,
-      }
-    );
-    const data = await res.json();
-    return data.access_token;
-  };
-
-  const getFlightOffers = async (token, from, to, date) => {
-    const res = await fetch(
-      `https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${from}&destinationLocationCode=${to}&departureDate=${date}&adults=1&currencyCode=INR&max=1&nonStop=true`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await res.json();
-    if (!data.data || data.data.length === 0) return null;
-
-    const offer = data.data[0];
-    const segment = offer.itineraries[0].segments[0];
-    return {
-      airline: segment.carrierCode,
-      departure: segment.departure.iataCode,
-      arrival: segment.arrival.iataCode,
-      departureTime: segment.departure.at,
-      arrivalTime: segment.arrival.at,
-      price: offer.price.total,
-    };
-  };
-
   const searchFlights = async () => {
     setLoading(true);
     setResults([]);
-    const tripDays = parseInt(days);
-    const today = new Date();
-    const token = await getAccessToken();
-    const combos = [];
 
-    for (let i = 0; i < 60; i++) {
-      const departDate = new Date(today);
-      departDate.setDate(departDate.getDate() + i);
-      const returnDate = new Date(departDate);
-      returnDate.setDate(returnDate.getDate() + tripDays);
+    try {
+      const res = await fetch(`${apiUrl}/flightroutes/flightinfo`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ from, to, days }),
+      });
 
-      const departStr = departDate.toISOString().split("T")[0];
-      const returnStr = returnDate.toISOString().split("T")[0];
-
-      const departFlight = await getFlightOffers(token, from, to, departStr);
-      const returnFlight = await getFlightOffers(token, to, from, returnStr);
-
-      if (departFlight && returnFlight) {
-        combos.push({
-          departureDate: departStr,
-          returnDate: returnStr,
-          depart: departFlight,
-          return: returnFlight,
-          totalPrice:
-            parseFloat(departFlight.price) + parseFloat(returnFlight.price),
-        });
+      const data = await res.json();
+      if (data.success) {
+        setResults(data.data);
+      } else {
+        alert(data.message || "Error fetching flights");
       }
+    } catch (err) {
+      // console.error(err);
+      alert("Failed to fetch flights");
     }
 
-    combos.sort((a, b) => a.totalPrice - b.totalPrice);
-    const todayKey = new Date().toISOString().split("T")[0];
-    await AsyncStorage.setItem(
-      `flight-${from}-${to}-${todayKey}`,
-      JSON.stringify({ date: todayKey, data: combos })
-    );
-    setResults(combos);
     setLoading(false);
   };
+
 
   const renderSuggestion = (item, setter, clear) => (
     <List.Item
