@@ -16,6 +16,7 @@ export default function LoginScreen() {
       [...Array(length)].map(() => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'[
         Math.floor(Math.random() * 62)
       ]).join('');
+    console.log('Login Data:', generateRandomString(10));
     login(generateRandomString(10));
     setVisible(true);
     showSnackbar('Login successful!');
