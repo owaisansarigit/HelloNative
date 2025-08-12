@@ -9,6 +9,7 @@ export default function SignupScreen() {
   const handleChange = (key, value) => {
     setForm({ ...form, [key]: value });
   };
+
   const showAlert = (title) => {
     if (Platform.OS === 'web') {
       window.alert(`${title}`);
@@ -16,8 +17,8 @@ export default function SignupScreen() {
       Alert.alert(title);
     }
   };
+
   const handleSignup = async () => {
-    console.log('Form submitted:', form);
     const { name, email, password } = form;
     if (!name.trim()) return showAlert('Please enter your name.');
     if (!email.trim() || !/\S+@\S+\.\S+/.test(email))
