@@ -39,10 +39,6 @@ export default function FlightSearch() {
         airport.code.toLowerCase().includes(query.toLowerCase())
     );
   };
-  useEffect(() => {
-    console.log(apiUrl);
-  }, [])
-
   const handleFromChange = (text) => {
     setFrom(text);
     setFromSuggestions(getLocalSuggestions(text));
@@ -63,21 +59,16 @@ export default function FlightSearch() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ from, to, days }),
       });
-
       const data = await res.json();
-      if (data.success) {
-        setResults(data.data);
-      } else {
-        alert(data.message || "Error fetching flights");
-      }
+      setResults(data?.data);
+      console.log("Flight search results:", data?.data);
     } catch (err) {
-      // console.error(err);
+      console.error("Error fetching flights:", err);
       alert("Failed to fetch flights");
     }
 
     setLoading(false);
   };
-
 
   const renderSuggestion = (item, setter, clear) => (
     <List.Item
@@ -170,7 +161,9 @@ export default function FlightSearch() {
                 keyExtractor={(_, i) => i.toString()}
                 renderItem={({ item }) => (
                   <List.Item
-                    title={`₹${item.totalPrice.toFixed(0)} | ${item.departureDate} → ${item.returnDate}`}
+                    title={`₹${item.totalPrice.toFixed(0)} | ${
+                      item.departureDate
+                    } → ${item.returnDate}`}
                     description={`Go: ${item.depart.airline} → Back: ${item.return.airline}`}
                     left={() => <List.Icon icon="airplane" />}
                     onPress={() => showModal(item)}
