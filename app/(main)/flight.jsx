@@ -175,7 +175,9 @@ export default function FlightSearch() {
                 keyExtractor={(_, i) => i.toString()}
                 renderItem={({ item }) => (
                   <List.Item
-                    title={`₹${item.totalPrice.toFixed(0)} | ${item.departureDate} → ${item.returnDate}`}
+                    title={`₹${item.totalPrice.toFixed(0)} | ${
+                      item.departureDate
+                    } → ${item.returnDate}`}
                     description={`Go: ${item.depart.airline} → Back: ${item.return.airline}`}
                     left={() => (
                       <List.Icon
@@ -224,31 +226,85 @@ export default function FlightSearch() {
                   </Badge>
                 </View>
 
-                <Text>Departure: {selectedFlight.departureDate}</Text>
-                <Text>Return: {selectedFlight.returnDate}</Text>
+                {/* Departure & Return Dates */}
+                <Text>
+                  Departure:{" "}
+                  {new Date(selectedFlight.departureDate).toLocaleDateString(
+                    "en-IN"
+                  )}{" "}
+                  {new Date(
+                    selectedFlight.depart.departureTime
+                  ).toLocaleTimeString("en-IN", {
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  })}
+                </Text>
+                <Text>
+                  Return:{" "}
+                  {new Date(selectedFlight.returnDate).toLocaleDateString(
+                    "en-IN"
+                  )}{" "}
+                  {new Date(
+                    selectedFlight.return.departureTime
+                  ).toLocaleTimeString("en-IN", {
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  })}
+                </Text>
 
+                {/* Outbound */}
                 <Text style={tw`mt-2 font-bold`}>Outbound</Text>
                 <Text>
                   {selectedFlight.depart.airline} |{" "}
-                  {selectedFlight.depart.departure} →{" "}
-                  {selectedFlight.depart.arrival}
+                  {selectedFlight.depart.departure} → ₹
+                  {selectedFlight.depart.price} {selectedFlight.depart.arrival}
                 </Text>
                 <Text>
-                  {selectedFlight.depart.departureTime} →{" "}
-                  {selectedFlight.depart.arrivalTime}
+                  {new Date(
+                    selectedFlight.depart.departureTime
+                  ).toLocaleTimeString("en-IN", {
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  })}{" "}
+                  →{" "}
+                  {new Date(
+                    selectedFlight.depart.arrivalTime
+                  ).toLocaleTimeString("en-IN", {
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  })}
                 </Text>
 
+                {/* Return */}
                 <Text style={tw`mt-2 font-bold`}>Return</Text>
                 <Text>
                   {selectedFlight.return.airline} |{" "}
-                  {selectedFlight.return.departure} →{" "}
-                  {selectedFlight.return.arrival}
+                  {selectedFlight.return.departure} → ₹
+                  {selectedFlight.return.price} {selectedFlight.return.arrival}
                 </Text>
                 <Text>
-                  {selectedFlight.return.departureTime} →{" "}
-                  {selectedFlight.return.arrivalTime}
+                  {new Date(
+                    selectedFlight.return.departureTime
+                  ).toLocaleTimeString("en-IN", {
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  })}{" "}
+                  →{" "}
+                  {new Date(
+                    selectedFlight.return.arrivalTime
+                  ).toLocaleTimeString("en-IN", {
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  })}
                 </Text>
 
+                {/* Total */}
                 <Text style={tw`mt-4 text-blue-600 font-bold`}>
                   Total: ₹{selectedFlight.totalPrice}
                 </Text>
