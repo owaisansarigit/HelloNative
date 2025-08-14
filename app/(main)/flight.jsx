@@ -5,9 +5,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  View,
 } from "react-native";
 import {
   ActivityIndicator,
+  Badge,
   Button,
   List,
   Modal,
@@ -39,6 +41,7 @@ export default function FlightSearch() {
         airport.code.toLowerCase().includes(query.toLowerCase())
     );
   };
+
   const handleFromChange = (text) => {
     setFrom(text);
     setFromSuggestions(getLocalSuggestions(text));
@@ -60,8 +63,15 @@ export default function FlightSearch() {
         body: JSON.stringify({ from, to, days }),
       });
       const data = await res.json();
-      setResults(data?.data);
-      console.log("Flight search results:", data?.data);
+
+      // Classify each flight as budget or premium
+      const classified = data?.data?.map((flight) => {
+        const isPremium = flight.totalPrice > 15000; // threshold
+        return { ...flight, type: isPremium ? "premium" : "budget" };
+      });
+
+      setResults(classified || []);
+      console.log("Flight search results:", classified);
     } catch (err) {
       console.error("Error fetching flights:", err);
       alert("Failed to fetch flights");
@@ -99,7 +109,11 @@ export default function FlightSearch() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed?.data?.length > 0) {
-          setResults(parsed.data);
+          const classified = parsed.data.map((flight) => {
+            const isPremium = flight.totalPrice > 15000;
+            return { ...flight, type: isPremium ? "premium" : "budget" };
+          });
+          setResults(classified);
         }
       }
     };
@@ -161,11 +175,25 @@ export default function FlightSearch() {
                 keyExtractor={(_, i) => i.toString()}
                 renderItem={({ item }) => (
                   <List.Item
-                    title={`₹${item.totalPrice.toFixed(0)} | ${
-                      item.departureDate
-                    } → ${item.returnDate}`}
+                    title={`₹${item.totalPrice.toFixed(0)} | ${item.departureDate} → ${item.returnDate}`}
                     description={`Go: ${item.depart.airline} → Back: ${item.return.airline}`}
-                    left={() => <List.Icon icon="airplane" />}
+                    left={() => (
+                      <List.Icon
+                        icon={item.type === "premium" ? "star" : "wallet"}
+                        color={item.type === "premium" ? "gold" : "green"}
+                      />
+                    )}
+                    right={() => (
+                      <Badge
+                        style={tw`${
+                          item.type === "premium"
+                            ? "bg-yellow-500"
+                            : "bg-green-500"
+                        }`}
+                      >
+                        {item.type.toUpperCase()}
+                      </Badge>
+                    )}
                     onPress={() => showModal(item)}
                   />
                 )}
@@ -174,6 +202,7 @@ export default function FlightSearch() {
           )}
         </ScrollView>
 
+        {/* Modal */}
         <Portal>
           <Modal
             visible={visible}
@@ -182,7 +211,19 @@ export default function FlightSearch() {
           >
             {selectedFlight && (
               <>
-                <Text style={tw`text-lg font-bold mb-2`}>Trip Details</Text>
+                <View style={tw`flex-row justify-between items-center mb-2`}>
+                  <Text style={tw`text-lg font-bold`}>Trip Details</Text>
+                  <Badge
+                    style={tw`${
+                      selectedFlight.type === "premium"
+                        ? "bg-yellow-500"
+                        : "bg-green-500"
+                    }`}
+                  >
+                    {selectedFlight.type.toUpperCase()}
+                  </Badge>
+                </View>
+
                 <Text>Departure: {selectedFlight.departureDate}</Text>
                 <Text>Return: {selectedFlight.returnDate}</Text>
 
