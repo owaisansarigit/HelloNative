@@ -1,12 +1,11 @@
-import { Redirect } from 'expo-router';
-import { ActivityIndicator, View } from 'react-native';
-import { Provider as PaperProvider, Text } from 'react-native-paper';
-import tw from 'twrnc';
-import { useAuth } from './utils/authContext';
+import { Redirect } from "expo-router";
+import { ActivityIndicator, View } from "react-native";
+import { Provider as PaperProvider, Text } from "react-native-paper";
+import tw from "twrnc";
+import { useAuth } from "./utils/authContext";
 
 export default function Index() {
   const { token } = useAuth();
-  console.log('Index component rendered, token:', token);
   if (token === undefined) {
     return (
       <PaperProvider>

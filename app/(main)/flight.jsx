@@ -55,7 +55,6 @@ export default function FlightSearch() {
   const searchFlights = async () => {
     setLoading(true);
     setResults([]);
-
     try {
       const res = await fetch(`${apiUrl}/flightroutes/flightinfo`, {
         method: "POST",
@@ -63,20 +62,14 @@ export default function FlightSearch() {
         body: JSON.stringify({ from, to, days }),
       });
       const data = await res.json();
-
-      // Classify each flight as budget or premium
-      const classified = data?.data?.map((flight) => {
-        const isPremium = flight.totalPrice > 15000; // threshold
-        return { ...flight, type: isPremium ? "premium" : "budget" };
-      });
-
-      setResults(classified || []);
-      console.log("Flight search results:", classified);
+      if (!res.ok) {
+        throw new Error(`${data?.message || "Unknown error"}`);
+      }
+      setResults(data?.data || []);
     } catch (err) {
-      console.error("Error fetching flights:", err);
-      alert("Failed to fetch flights");
+      console.log("Error fetching flight data:", err);
+      alert(err?.message || "Failed to fetch flight data");
     }
-
     setLoading(false);
   };
 

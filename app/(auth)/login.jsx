@@ -65,11 +65,12 @@ export default function LoginScreen() {
         await AsyncStorage.setItem("token", token);
         await AsyncStorage.setItem("user", JSON.stringify(user));
         login(token, user);
-        console.log("Login successful:", user, token);
+        console.log("Login successful:");
         showSnackbar("Login successful!");
       } else {
         showAlert("Invalid server response.");
       }
+      await console.log(AsyncStorage.getItem("token"));
     } catch (error) {
       console.error("Error during login:", error);
       showAlert("An error occurred. Please try again later.");
